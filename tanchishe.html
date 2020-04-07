@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>贪吃蛇</title>
+    <style>
+        .div-class {
+            width: 20px;
+            height: 20px;
+            border: 1px ridge #444444;
+            float: left;
+            background-color: #87CEFA;
+        }
+        .line-class {
+            clear:both;
+        }
+        .food-class {
+            background-color: #FF0099;
+        }
+        .food {
+            background-color: #000033;
+        }
+    </style>
+</head>
+<body>
+<button>开始游戏</button>
+<script>
+    const log = console.log.bind(console)
+    const e = function(selector) {
+        let element = document.querySelector(selector)
+        if (element === null) {
+            let s = `选择器 ${selector} 写错了, 请仔细检查并且复习三种基本的选择器`
+            alert(s)
+            return null
+        } else {
+            return element
+        }
+    }
+    const es = function(selector) {
+        let elements = document.querySelectorAll(selector)
+        if (elements.length === 0) {
+            let s = `选择器 ${selector} 写错了, 请仔细检查并且复习三种基本的选择器`
+            alert(s)
+            return []
+        } else {
+            return elements
+        }
+    }
+    const appendHtml = function(element, html) {
+        element.insertAdjacentHTML('beforeend', html)
+    }
+    const makeMap = () => {
+        let body = e('body')
+        for (let i = 0; i < 40; i++) {
+            appendHtml(body,'<div class="line-class"></div>')
+            let a = es('.line-class')
+            let a1 = a[i]
+            for (let j = 0; j < 40; j++) {
+                appendHtml(a1,'<div class="div-class"></div>')
+            }
+            appendHtml(a1,'<br>')
+        }
+    }
+    let snake = [
+        {
+            'x': 2,
+            'y': 10
+            ,
+        },
+        {
+            'x': 1,
+            'y': 10,
+        },
+        {
+            'x': 0,
+            'y': 10,
+        },
+    ]
+    const objectSnake = (line) => {
+        for (let i = 0; i < snake.length; i++) {
+            let x = snake[i]['x']
+            let y = snake[i]['y']
+            let a = line[y]
+            let b = a.querySelectorAll('.div-class')
+            b = b[x]
+            b.classList.add('food-class')
+        }
+    }
+    var returna
+    const makeSnake = () => {
+        let body = e('body')
+        let line = es('.line-class')
+        objectSnake(line)
+        deleteSnake()
+        let p =[]
+        let food = e('.food')
+        for (let k = 0; k < snake.length; k++) {
+            let one = JSON.stringify(snake[k])
+            p.push(one)
+        }
+        log('returna',returna)
+        let p1 = JSON.stringify(returna)
+        if (p.includes(p1)) {
+            snake.push(returna)
+            food.classList.remove('food')
+            makeFood()
+        }
+    }
+    const random = () => {
+        let a = Math.ceil(Math.random()*39)
+        return a
+    }
+    const getRandom = () => {
+        let result = {}
+        result.x = random()
+        result.y = random()
+        if (!snake.includes(result)) {
+            return result
+        } else {
+            getRandom()
+        }
+    }
+    const makeFood = () => {
+        let a = getRandom()
+        let line = es('.line-class')
+        let ay = line[a['y']]
+        let b = ay.querySelectorAll('.div-class')
+        let ax = b[a['x']]
+        ax.classList.add('food')
+        returna = a
+    }
+    const arrowright = () => {
+        for (let i = snake.length - 1; i >= 0; i--) {
+            if (i != 0) {
+                snake[i] = snake[i - 1]
+            } else {
+                let x1 = snake[i]['x'] + 1
+                let y1 = snake[i]['y']
+                let aftermove = {}
+                aftermove.x = x1
+                aftermove.y = y1
+                snake[i] = aftermove
+            }
+        }
+    }
+    const arrowleft = () => {
+        for (let i = snake.length - 1; i >= 0; i--) {
+            if (i != 0) {
+                snake[i] = snake[i - 1]
+            } else {
+                let x1 = snake[i]['x'] - 1
+                let y1 = snake[i]['y']
+                let aftermove = {}
+                aftermove.x = x1
+                aftermove.y = y1
+                snake[i] = aftermove
+            }
+        }
+    }
+    const arrowdown = () => {
+        for (let i = snake.length - 1; i >= 0; i--) {
+            if (i != 0) {
+                snake[i] = snake[i - 1]
+            } else {
+                let x1 = snake[i]['x']
+                let y1 = snake[i]['y'] + 1
+                let aftermove = {}
+                aftermove.x = x1
+                aftermove.y = y1
+                snake[i] = aftermove
+            }
+        }
+    }
+    const arrowup = () => {
+        for (let i = snake.length - 1; i >= 0; i--) {
+            if (i != 0) {
+                snake[i] = snake[i - 1]
+            } else {
+                let x1 = snake[i]['x']
+                let y1 = snake[i]['y'] - 1
+                let aftermove = {}
+                aftermove.x = x1
+                aftermove.y = y1
+                snake[i] = aftermove
+            }
+        }
+    }
+    const deleteSnake = () => {
+        let allLine = es('.line-class')
+        for (let i = 0; i < 40; i++) {
+            let line = allLine[i]
+            let div = line.querySelectorAll('.div-class')
+            for (let j = 0; j < 40; j++) {
+                if (div[j].classList.contains('food-class')) {
+                    let needDelete = {}
+                    needDelete['x'] = j
+                    needDelete['y'] = i
+                    let p = []
+                    for (let k = 0; k < snake.length; k++) {
+                        let one = JSON.stringify(snake[k])
+                        p.push(one)
+                    }
+                    let p1 = JSON.stringify(needDelete)
+                    if (!p.includes(p1)) {
+                        div[j].classList.remove('food-class')
+                    }
+                }
+            }
+        }
+    }
+    var a
+    const run = () => {
+        a = setInterval(() => {
+            makeSnake()
+            if (snake[0]['x'] === 39) {
+                clearInterval(a)
+                setTimeout(() => {
+                    alert('失败了')
+                }, 500)
+            }
+            if (snake[0]['y'] === 39) {
+                clearInterval(a)
+                setTimeout(() => {
+                    alert('失败了')
+                }, 500)
+            }
+        }, 200)
+    }
+    const runstart = () => {
+        run()
+        a = setInterval(() => {
+            arrowright()
+        }, 200)
+    }
+    const bindEvent = () => {
+        let container = e('body')
+        let button = e('button')
+        button.addEventListener('click', () => {
+            runstart()
+        })
+        container.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp') {
+                clearInterval(a)
+                a = setInterval(() => {
+                    arrowup()
+                }, 200)
+            } else if (event.key === 'ArrowDown') {
+                clearInterval(a)
+                a = setInterval(() => {
+                    arrowdown()
+                }, 200)
+            } else if (event.key === 'ArrowLeft') {
+                clearInterval(a)
+                a = setInterval(() => {
+                    arrowleft()
+                }, 200)
+            } else if (event.key === 'ArrowRight') {
+                clearInterval(a)
+                a = setInterval(() => {
+                    arrowright()
+                }, 200)
+            }
+        })
+    }
+    const main = () => {
+        makeMap()
+        makeFood()
+        makeSnake()
+        bindEvent()
+    }
+    main()
+</script>
+</body>
+</html>
